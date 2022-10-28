@@ -1,13 +1,31 @@
 <html>
-	<head>
-		<meta charset="utf-8"/>
-		<script src="wasm/wasm_exec.js"></script>
-		<script>
-			const go = new Go();
-			WebAssembly.instantiateStreaming(fetch("wasm/myWasm.wasm"), go.importObject).then((result) => {
-				go.run(result.instance);
-			});
-		</script>
-	</head>
-	<body></body>
+    <meta charset="utf-8"/>
+
+    <body style="margin: 0; padding: 0; overflow: hidden; background-color: rgb(255, 255, 255);"></body>
+    <canvas id="myCanvas"></canvas>
+
+    <script src="wasm/wasm_exec.js"></script>
+    <script>
+        document.body.scrollTop = 0; // <-- pull the page to the top
+
+        var cnvs = document.getElementById("myCanvas");
+        cnvs.width = window.innerWidth; 
+        cnvs.height = window.innerHeight; 
+        var ctx = cnvs.getContext('2d');
+
+        const ZOOM_FACTOR = 0.1;
+
+        var realStart = -2;
+        var realEnd = 0.47;
+        var imaginaryStart = -1.12;
+        var imaginaryEnd = 1.12;
+        var res = 1;
+        var maxIteration = 1000;
+
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("wasm/myWasm.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+    </script>
+	</body>
 </html>
