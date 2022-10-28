@@ -6,8 +6,8 @@ import (
 )
 
 var cnvs js.Value = js.Global().Get("cnvs")
-var width float64 = cnvs.Get("width")
-var height float64 = cnvs.Get("height") 
+var width float64 = cnvs.Get("width").Float()
+var height float64 = cnvs.Get("height").Float() 
 var ctx js.Value = js.Global().Get("ctx") 
 
 var realStart float64 = js.Global().Get("realStart").Float()
@@ -18,8 +18,8 @@ var res float64 = js.Global().Get("res").Float()
 var maxIteration float64 = js.Global().Get("maxIteration").Float()
 
 func drawMandlebrot(this js.Value, args []js.Value) {
-	for i := 0; i < width; i += res {
-		for j := 0; j < height; j += res {
+	for i := float64(0); i < width; i += res {
+		for j := float64(0); j < height; j += res {
 			x := 0
 			y := 0
 			xScaled := realStart + (i/width) * (realEnd - realStart)
