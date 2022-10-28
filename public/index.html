@@ -27,17 +27,8 @@
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("wasm/myWasm.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
-            animate();
+           // drawMandlebrot();
         });
-
-        function animate() {
-            for(var z = 0; z < cnvs.height/res*10; z++) {   //for loops go fast, requestAnimationFrame delays VSYNC and waits for tab to be in focus
-                drawMandlebrot();
-            }
-
-            if (i < cnvs.width)
-                requestAnimationFrame(animate);
-        }
         
 
     </script>

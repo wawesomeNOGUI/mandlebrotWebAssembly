@@ -19,7 +19,7 @@ var maxIteration float64 = js.Global().Get("maxIteration").Float()
 
 var i float64 = js.Global().Get("i").Float()
 var j float64
-func drawMandlebrot(this js.Value, args []js.Value) any {
+func draw() {
 	x := float64(0)
 	y := float64(0)
 	xScaled := realStart + (i/width) * (realEnd - realStart)
@@ -42,16 +42,37 @@ func drawMandlebrot(this js.Value, args []js.Value) any {
     if(j > height) {
         j = 0;
         i += res;
-		js.Global().Set("i", i)
+		//js.Global().Set("i", i)
     }  
+}
+
+/*
+func drawMandlebrot(this js.Value, args []js.Value) any {
+	animate(this, args)
 
 	return true
 }
+*/
 
 func main() {  
     fmt.Println("Go Web Assembly")
 
-	js.Global().Set("drawMandlebrot", js.FuncOf(drawMandlebrot))
+	//js.Global().Set("drawMandlebrot", js.FuncOf(drawMandlebrot))
+	var animate js.Func
+
+	animate = js.FuncOf(func(this js.Value, args []js.Value) any {
+		for z := float64(0); z < height/res*10; z++ {
+			draw()
+		}
+
+		if i < width {
+			js.Global().Call("requestAnimationFrame", animate)
+		}
+
+		return nil
+	})
+
+	js.Global().Call("requestAnimationFrame", animate)
 
 	select {}  //so go program doesn't exit
 }
