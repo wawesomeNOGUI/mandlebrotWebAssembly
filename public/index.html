@@ -1,7 +1,7 @@
 <html>
     <meta charset="utf-8"/>
 
-    <body style="margin: 0; padding: 0; overflow: hidden; background-color: rgb(255, 255, 255);"></body>
+    <body style="margin: 0; padding: 0; overflow: hidden; background-color: rgb(0, 0, 0);"></body>
     <canvas id="myCanvas"></canvas>
 
     <script src="wasm/wasm_exec.js"></script>
@@ -22,10 +22,24 @@
         var res = 1;
         var maxIteration = 1000;
 
+        var i = 0;  //set by go
+
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("wasm/myWasm.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
+            animate();
         });
+
+        function animate() {
+            for(var z = 0; z < cnvs.height/res*10; z++) {   //for loops go fast, requestAnimationFrame delays VSYNC and waits for tab to be in focus
+                drawMandlebrot();
+            }
+
+            if (i < cnvs.width)
+                requestAnimationFrame(animate);
+        }
+        
+
     </script>
 	</body>
 </html>
