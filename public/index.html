@@ -22,15 +22,30 @@
         var res = 1;
         var maxIteration = 1000;
 
-        var i = 0;  //set by go
-
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("wasm/myWasm.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
            // drawMandlebrot();
         });
         
+        cnvs.addEventListener('dblclick', e => {
+            // const zfw = (canvas.width * ZOOM_FACTOR)
+            // const zfh = (canvas.height * ZOOM_FACTOR)
 
+            // realStart = getRelativePointR(e.pageX - canvas.offsetLeft - zfw, canvas.width);
+            // realEnd = getRelativePointR(e.pageX - canvas.offsetLeft + zfw, canvas.width);
+            // imaginaryStart = getRelativePointI(e.pageY - canvas.offsetTop - zfh, canvas.height);
+            // imaginaryEnd = getRelativePointI(e.pageY - canvas.offsetTop + zfh, canvas.height);
+
+            // i = 0;
+            // j = 0;
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, cnvs.width, cnvs.height);
+            requestAnimationFrame(animate);
+        })
+
+        const getRelativePointR = (pixel, length) => realStart + (pixel / length) * (realEnd - realStart);
+        const getRelativePointI = (pixel, length) => imaginaryStart + (pixel / length) * (imaginaryEnd - imaginaryStart);
     </script>
 	</body>
 </html>
