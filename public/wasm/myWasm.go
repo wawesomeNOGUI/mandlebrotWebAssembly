@@ -70,6 +70,7 @@ func Render(this js.Value, args []js.Value) any {
 			drawMandlebrot(i, j)
 		}
 	}
+	cvs.imgCopy()
 
 	fmt.Println("done")
 
@@ -92,13 +93,14 @@ func main() {
 
 	js.Global().Set("cvs", cvs.canvas)
 
+	/*
 	go func() {
 		for {
 			time.Sleep(10000)
 			cvs.imgCopy()
 		}
 	}()
-
+*/
 	/*
 	var animate js.Func
 	//var i float64
