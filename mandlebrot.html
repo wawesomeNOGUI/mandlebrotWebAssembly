@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html>
+<body style="margin: 0; padding: 0; background-color: rgb(255, 255, 255);">
+  <canvas id="myCanvas"></canvas>
+
+<script>
+document.body.scrollTop = 0; // <-- pull the page to the top
+document.body.style.overflow = 'hidden'; // <-- To hide scrollbar
+
+var canvas = document.getElementById('myCanvas');
+var ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const ZOOM_FACTOR = 0.1;
+
+var realStart = -2;
+var realEnd = 0.47;
+var realDis = realEnd - realStart;
+var imaginaryStart = -1.12;
+var imaginaryEnd = 1.12;
+
+// var realStart = -1.5;
+// var realEnd = 0.47;
+// var imaginaryStart = -1;
+// var imaginaryEnd = 1;
+
+/*
+var realStart = -3;
+var realEnd = 2.47;
+var imaginaryStart = -2.12;
+var imaginaryEnd = 2.12;
+*/
+
+// does overflow/underflow for negatives
+/*
+function clampTo255(g) {
+    return (g % 256 + 256) % 256
+}
+*/
+
+var res = 1;
+const maxIteration = 1000;
+var i = 0;
+var j = 0;
+function drawMandlebrot() {
+    var x = 0;
+    var y = 0;
+    var xScaled = realStart + (i/canvas.width) * (realEnd - realStart);
+    var yScaled = imaginaryStart + (j/canvas.height) * (imaginaryEnd - imaginaryStart);
+
+    var iteration = 0;
+    while (x*x + y*y <= 4 && iteration < maxIteration) {
+        var xTemp = x*x - y*y + xScaled;
+        y = 2*x*y + yScaled;
+        x = xTemp;
+        iteration++;
+    }
+
+    if(x*x + y*y >= 4) {
+        var c = iteration % 255; 
+        //console.log(c)
+        ctx.fillStyle = "rgb("+c%25*5+","+c%10+","+c+")";
+        ctx.fillRect(i, j, res, res);
+    } 
+
+    j += res;
+    if(j > canvas.height) {
+        j = 0;
+        i += res;
+    }    
+}
+
+function animate() {
+    for(var z = 0; z < canvas.height/res*10; z++) {   //for loops go fast, requestAnimationFrame delays VSYNC and waits for tab to be in focus
+        drawMandlebrot();
+    }
+
+    if (i < canvas.width)
+        requestAnimationFrame(animate);
+}
+
+//var drawInterval = setInterval(drawMandlebrot, -20);
+requestAnimationFrame(animate);
+/*
+for (var i = 0; i < canvas.width; i += res) {
+    for (var j = 0; j < canvas.height; j += res) {
+        var x = 0;
+        var y = 0;
+        var xScaled = realStart + (i/canvas.width) * (realEnd - realStart);
+        var yScaled = imaginaryStart + (j/canvas.height) * (imaginaryEnd - imaginaryStart);
+
+        var iteration = 0;
+        const maxIteration = 1000;
+        while (x*x + y*y <= 2*2 && iteration < maxIteration) {
+            var xTemp = x*x - y*y + xScaled;
+            y = 2*x*y + yScaled;
+            x = xTemp;
+            iteration++;
+        }
+
+        if(x*x + y*y > 4.5) {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(i, j, res, res);
+        } 
+    }
+}
+*/
+
+canvas.addEventListener('dblclick', e => {
+    const zfw = (canvas.width * ZOOM_FACTOR)
+    const zfh = (canvas.height * ZOOM_FACTOR)
+
+    realStart = getRelativePointR(e.pageX - canvas.offsetLeft - zfw, canvas.width);
+    realEnd = getRelativePointR(e.pageX - canvas.offsetLeft + zfw, canvas.width);
+    imaginaryStart = getRelativePointI(e.pageY - canvas.offsetTop - zfh, canvas.height);
+    imaginaryEnd = getRelativePointI(e.pageY - canvas.offsetTop + zfh, canvas.height);
+
+    i = 0;
+    j = 0;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    requestAnimationFrame(animate);
+})
+
+const getRelativePointR = (pixel, length) => realStart + (pixel / length) * (realEnd - realStart);
+const getRelativePointI = (pixel, length) => imaginaryStart + (pixel / length) * (imaginaryEnd - imaginaryStart);
+
+</script>
+</body>
+</html>
